@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %} Новый диалог {%endblock %}
+{% load static %}
+
+{% block content %}
+{% include 'includes/switcher.html' %}
+ <div class="columns is-mobile">
+  <div class="column is-offset-one-fifth">
+
+
+<div class="field has-addons">
+<form>
+  <div class="control">
+    <input class="input is-large" name="q" type="text" placeholder="Поиск пользователя" value="{{ request.GET.q }}">
+  </div>
+  <div class="control">
+    <button type="submit"  name="action" class="btn btn-primary">Поиск</buttom>
+  </div>
+  </form>
+</div>
+
+
+</div>
+</div>
+
+<div class="column is-one-quarter">
+
+{% for user in users %}
+<div class="box">
+  <article class="media">
+    <div class="media-left">
+    </div>
+    <div class="media-content">
+      <div class="content">
+        <p>
+          <strong>{{ user.profile.first_name }} {{ user.profile.last_name }}</strong><small>@{{ user.username }}</small>
+        </p>
+        <a href="{% url 'posts:newconversation' user.username %}" class="btn btn-primary">Начать диалог</a>
+      </div>
+    </div>
+  </article>
+</div>
+{% endfor %}
+	
+
+</div>
+
+{% endblock %}

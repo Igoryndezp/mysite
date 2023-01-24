@@ -1,0 +1,33 @@
+{% extends 'base.html' %} 
+ {% block title %} Избранные авторы {%endblock %}
+  {% block content %}
+  {% include 'includes/switcher.html' %}
+<div class="container py-5">
+  
+  <h1>Избранные авторы</h1>
+  {% for post in page_obj %}
+  <article>{% include 'includes/article.html' %}</article>
+  <a
+  class="btn btn-outline-primary"
+  href="{% url 'posts:post_detail' post.id %}"
+  role="button"
+  >Подробная информация
+</a>
+
+  {% if post.group %}
+
+  <a
+    class="btn btn-outline-primary"
+    href="{% url 'posts:group_list' post.group.slug %}"
+    role="button"
+    >Все записи группы {{post.group}}</a
+  >
+
+  {% endif %}
+
+  {% if not forloop.last %}
+  <hr />
+  {% endif %} {% endfor %} 
+  {% include 'includes/paginator.html' %} 
+  {% endblock%}
+</div>

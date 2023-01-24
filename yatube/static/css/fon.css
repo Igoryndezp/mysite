@@ -1,0 +1,17 @@
+*{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.box{
+    background: url(../img/fon.jpg);
+    background-position: top center;
+   background-attachment: fixed;
+   min-height: 785px;
+   position: relative;
+   -webkit-background-size: cover;
+   background-size: cover;
+  }

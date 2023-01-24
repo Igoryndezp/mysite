@@ -1,0 +1,110 @@
+{% extends 'base.html' %} 
+{% block title %}Страница пользователя {{author}}
+{%endblock %} {% block content %}
+<style>
+  img[tabindex="0"] {
+    cursor: zoom-in;
+  }
+  img[tabindex="0"]:focus {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: auto;
+    height: auto;
+    max-width: 90%;
+    max-height: 100%;
+    margin: auto;
+    box-shadow: 0 0 20px #000, 0 0 0 1000px rgba(59,59,59,.4);
+  }
+  img[tabindex="0"]:focus, 
+  img[tabindex="0"]:focus ~ * {
+    pointer-events: none;
+  }
+</style>
+<div class="container py-5">
+  <h1>Страница пользователя {{author}}</h1>
+  <aside class="col-12 col-md-3">
+    <ul class="list-group list-group-flush">
+
+{%for a in name %}
+<div class="card mb-3" style="max-width: 540px;">
+  <div class="row g-0">
+    {% if a.profile_photo %}
+    <div class="col-md-15">
+      <img src="{{ a.profile_photo.url }}" class="card-img-top" tabindex='0' width='400' alt="">
+    </div>
+    {% endif %} 
+    <div class="col-md-20">
+      <div class="card-body">
+        <h5 class="card-title">{{author.get_full_name}}</h5>
+        <p class="card-text"> Почта: {{author.email}}</p>
+        <p class="card-text"> День рождения: {{a.date_of_birth}}</p>
+        <p class="card-text"> Telegram {{a.instagram}}</p>
+        <p class="card-text"> Об авторе: {{a.bio}}</p>
+        <p class="card-text"> Подписчиков: {{ author.following.count }}</p>
+        <p class="card-text"> Подписан: {{ author.follower.count }}</p>
+        {% if following %}
+      <a
+        class="btn btn-lg btn-light"
+        href="{% url 'posts:profile_unfollow' author.username %}" role="button"
+      >
+        Отписаться
+      </a>
+      {%if user != author%}
+     <a href="{% url 'posts:newconversation' author.username %}" class="btn btn-primary">Начать диалог</a>
+     {% endif %}
+    {% else %}
+    {%if user != author%}
+        <a
+          class="btn btn-lg btn-primary"
+          href="{% url 'posts:profile_follow' author.username %}" role="button"
+        >
+          Подписаться
+        </a>
+        {% endif %}
+        {%if user != author%}
+     <a href="{% url 'posts:newconversation' author.username %}" class="btn btn-primary">Начать диалог</a>
+     {% endif %}
+     {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+</aside>
+
+{%endfor%}
+  <h2>Посты  {{author}}:</h2>
+  <h3>Всего постов: {{post_count}}</h3>
+  {% for post in page_obj %}
+  <article>{% include 'includes/article.html' %}
+  </article>
+  <a
+    class="btn btn-outline-primary"
+    href="{% url 'posts:comment_post' post.id %}"
+    role="button"
+    >Оставить комментарий </a
+  >
+  <a
+  class="btn btn-outline-primary"
+  href="{% url 'posts:post_detail' post.id %}"
+  role="button"
+  >Подробная информация
+</a>
+  {% if post.group %}
+  <a
+    class="btn btn-outline-primary"
+    href="{% url 'posts:group_list' post.group.slug %}"
+    role="button"
+    >Все записи группы {{post.group}}</a
+  >
+
+  {% endif %} {% if not forloop.last %}
+  <hr />
+  
+  {% endif %} {% endfor %} {% include 'includes/paginator.html' %}
+</div>
+
+{% endblock %}

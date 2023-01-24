@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %} Мои сообщения {%endblock %}
+{% load static %}
+{% block content %}
+{% include 'includes/switcher.html' %}
+<script>
+  const toggleButton = document.querySelector(".dark-light");
+const colors = document.querySelectorAll(".color");
+
+colors.forEach((color) => {
+ color.addEventListener("click", (e) => {
+  colors.forEach((c) => c.classList.remove("selected"));
+  const theme = color.getAttribute("data-color");
+  document.body.setAttribute("data-theme", theme);
+  color.classList.add("selected");
+ });
+});
+
+toggleButton.addEventListener("click", () => {
+ document.body.classList.toggle("dark-mode");
+});
+
+</script>
+  <div class="wrapper">
+   <div class="conversation-area">
+    <div class="msg online">
+     <div class="msg-detail">
+      {% for message in messages %}
+
+<a class="{% if active_direct == message.user.username %}is-active{% endif %}" href="{% url 'posts:directs' message.user.username %}">
+<div class="box">
+  <article class="media">
+    <div class="media-left">
+      <figure class="image is-64x64">
+        {% if image.profile_photo %}
+            <img src="{{ image.profile_photo.url }}" class="card-img-top" alt="Placeholder image">
+        {% endif %} 
+
+      </figure>
+    </div>
+    <div class="media-content">
+
+      <div class="content">
+        <p>
+          <strong>{{ message.user.first_name }} {{ message.user.last_name }}</strong> <small>@{{ message.user.username }}</small>
+        </p>
+      </div>
+
+      <div class="content">
+        {% if message.unread %}
+        <p style="font-weight: bold; color: red;">
+          <i class="material-icons">mark_chat_unread</i> {{ message.unread }}
+        </p>
+        {% endif %}    
+            
+      </div>
+
+    </div>
+  </article>
+</div>
+</a>
+{% endfor %}
+      <div class="msg-username"></div>
+      <div class="msg-content">
+       <span class="msg-message"></span>
+       <span class="msg-date"></span>
+      </div>
+     </div>
+    </div>
+    <a href="{% url 'posts:usersearch' %}" class="add"></a>
+
+    <div class="overlay"></div>
+   </div>
+   <div class="chat-area">
+    <div class="chat-area-header">
+    </div>
+    {% for direct in directs %}
+<div class="box">
+    <div class="media-left">
+    </div>
+    <div class="media-content">
+      <div class="content">
+        <p>
+          <ul>
+
+          <strong>
+            {{ direct.sender.first_name }} {{ direct.sender.last_name }}
+          </strong>
+            от: 
+          <strong>
+            <small>{{ direct.date|date:'N d G:i'}}</small>
+          </strong>
+        </p>
+   
+        {{ direct.body }} 
+      </ul>
+      </div>
+    </div>
+</div>
+{% endfor %}
+<form role="form" method="POST" action="{% url 'posts:send_direct' %}">
+  {% csrf_token %}
+  <div class="media-content">
+    <input type="hidden" name="to_user" value="{{ active_direct }}">
+    <div class="field">
+      <p class="control">
+        <textarea rows="2" cols="100" class="textarea" name="body" placeholder="Новое сообщение"></textarea>
+      </p>
+    </div>
+    <nav class="level">
+      <div class="level-left">
+        <div class="level-item">
+            <button type="submit"  name="action" class="btn btn-primary">Отправить</buttom>
+        </div>
+      </div>
+    </nav>
+  </div>
+</form>
+{% endblock %}
